@@ -31,11 +31,11 @@ npm run dev
 
 Open http://localhost:3000
 
-Click **"Try the live demo"** → you're instantly logged in as a demo flipper.
+Click **"Try the live demo"** → you’re instantly logged in as a demo flipper.
 
 Everything works offline in your browser.
 
-## What's Included
+## What’s Included
 
 - **Landing page** (`/`) – Beautiful hero + quadrant overview
 - **Full Dashboard** (`/dashboard`) with:
@@ -90,7 +90,7 @@ npm install
 npm run dev
 ```
 
-Open http://localhost:3000 → Click "Try the live demo"
+Open http://localhost:3000 → Click “Try the live demo”
 
 Everything works with localStorage while you set up Supabase in the background.
 
@@ -98,7 +98,7 @@ Everything works with localStorage while you set up Supabase in the background.
 
 ## Recommended Tech Stack Going Forward
 
-- **Frontend**: Next.js 14 (App Router) + Tailwind + TypeScript ← you're here
+- **Frontend**: Next.js 14 (App Router) + Tailwind + TypeScript ← you’re here
 - **Backend / DB**: Supabase (Postgres + Auth + Realtime)
 - **Payments**: Stripe (Subscriptions + Checkout + Customer Portal)
 - **Hosting**: Vercel
@@ -116,8 +116,8 @@ Want me to:
 4. Generate a logo / branding assets?
 5. Add more projects or advanced filtering?
 
-Just say the word and we'll keep building.
+Just say the word and we’ll keep building.
 
 This is already a massive step forward from the HTML prototype. Great decision moving to real code.
 
-Let's make Flip Property Coach the default tool for every serious property flipper in the UK. 🚀
+Let’s make Flip Property Coach the default tool for every serious property flipper in the UK. 🚀
