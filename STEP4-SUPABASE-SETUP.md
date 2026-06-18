@@ -1,7 +1,7 @@
 # Step 4: Real Backend & Database (Supabase) – Complete Setup Guide
 
 **Status:** ✅ Delivered  
-**Goal:** Replace localStorage with a secure, scalable PostgreSQL database + Row Level Security so every user's data is private, persistent across devices, and realtime-ready.
+**Goal:** Replace localStorage with a secure, scalable PostgreSQL database + Row Level Security so every user’s data is private, persistent across devices, and realtime-ready.
 
 ---
 
@@ -21,7 +21,7 @@
 2. Click **New Project**.
 3. Fill in:
    - Name: `flip-property-coach`
-   - Database Password: (save this somewhere safe — you'll need it for direct DB access)
+   - Database Password: (save this somewhere safe — you’ll need it for direct DB access)
    - Region: Choose closest to your users (e.g. Europe West if UK-focused)
 4. Click **Create new project** and wait ~1 minute.
 
@@ -35,7 +35,7 @@
 4. Copy the **entire contents** and paste into the SQL Editor.
 5. Click **Run**.
 
-You should see "Success. No rows returned" or similar.
+You should see “Success. No rows returned” or similar.
 
 This creates:
 - All tables with proper relationships
@@ -61,7 +61,7 @@ NEXT_PUBLIC_SUPABASE_URL=https://your-project-ref.supabase.co
 NEXT_PUBLIC_SUPABASE_ANON_KEY=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
 ```
 
-**Never commit `.env.local`** — it's already in `.gitignore`.
+**Never commit `.env.local`** — it’s already in `.gitignore`.
 
 ---
 
@@ -82,7 +82,7 @@ The current dashboard still uses `lib/storage.ts` (localStorage) so the demo wor
 To go fully real:
 
 1. Create a new file `lib/data.ts` that uses Supabase (I can generate this in Step 5 when we add real auth).
-2. Or tell me "Make the dashboard use Supabase now" and I'll update `dashboard/page.tsx` + storage layer with real queries (requires auth first for best results).
+2. Or tell me “Make the dashboard use Supabase now” and I’ll update `dashboard/page.tsx` + storage layer with real queries (requires auth first for best results).
 
 For now, the schema + client are ready. You can start writing queries like:
 
@@ -107,7 +107,7 @@ npm run dev
 
 Everything still works exactly as before (demo mode with localStorage).
 
-When you're ready for real auth + database (Step 5), we'll:
+When you’re ready for real auth + database (Step 5), we’ll:
 - Add Supabase Auth (magic link email login)
 - Protect the dashboard
 - Replace storage calls with real Supabase calls
@@ -124,12 +124,12 @@ Then Step 6 (Stripe) becomes much more powerful because we can tie subscriptions
 
 ---
 
-## What's Protected by RLS (Security)
+## What’s Protected by RLS (Security)
 
 - A flipper can only see/edit **their own** projects, transactions, team, saved properties, todos.
 - Suppliers can only manage **their own** listings and ad purchases.
 - The supplier marketplace is publicly readable (so flippers can browse).
-- No one can see another user's cashflow or private notes.
+- No one can see another user’s cashflow or private notes.
 
 This is production-grade security out of the box.
 
@@ -139,14 +139,14 @@ This is production-grade security out of the box.
 
 Just reply with:
 
-- "Generate the data layer for Supabase" (Step 4.5)
-- "Let's do Step 5 – Auth now"
-- "Add realtime to the dashboard"
-- "Seed more demo data"
+- “Generate the data layer for Supabase” (Step 4.5)
+- “Let’s do Step 5 – Auth now”
+- “Add realtime to the dashboard”
+- “Seed more demo data”
 - Or any tweaks to the schema
 
 You now have a **real, secure, scalable backend** ready for production users.
 
 This is a huge milestone. The app is no longer a prototype — it has a proper database foundation.
 
-Ready when you are. Let's keep going. 🚀
+Ready when you are. Let’s keep going. 🚀

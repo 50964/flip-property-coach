@@ -31,7 +31,7 @@ You now have a beautiful, fully interactive **Admin Panel** at `/admin` that fee
 - Searchable table of flippers + suppliers
 - Role badges, status, project count, last active
 - One-click Suspend / Reactivate
-- Ready for future "Impersonate" and notes columns
+- Ready for future “Impersonate” and notes columns
 
 **4. Leads Tab**
 - Platform-wide view of recent enquiries (anonymised for demo)
@@ -39,28 +39,28 @@ You now have a beautiful, fully interactive **Admin Panel** at `/admin` that fee
 
 **5. Revenue Tab**
 - Clean breakdown of Education MRR + Ad revenue + Lead fees
-- Big numbers + "Download CSV Report" + "Open Stripe Dashboard" buttons
+- Big numbers + “Download CSV Report” + “Open Stripe Dashboard” buttons
 
 **6. Educate Content Tab**
 - Placeholder ready for full content management (add/edit/reorder Academy resources)
 
 ### Design
 - Consistent dark theme + gold accents from the rest of the product
-- Prominent red "DEMO MODE — NOT PRODUCTION" banner
+- Prominent red “DEMO MODE — NOT PRODUCTION” banner
 - Professional, calm, trustworthy admin aesthetic
 
 ### How to Access It
 
 **Fastest way:**
 1. Go to http://localhost:3000/login
-2. Click the new **"Continue as Admin Demo"** button (red border)
-3. You're instantly inside the full Admin Panel
+2. Click the new **“Continue as Admin Demo”** button (red border)
+3. You’re instantly inside the full Admin Panel
 
 From inside the main dashboard you can also navigate back using the header button.
 
 ### Real Production Wiring (Next)
 
-When you're ready to go live:
+When you’re ready to go live:
 
 1. Add `is_admin` boolean column to `profiles` table (or use a separate `admin_users` table)
 2. Update middleware to protect `/admin` properly (only allow users where `is_admin = true`)
