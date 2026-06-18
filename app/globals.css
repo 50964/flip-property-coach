@@ -1,0 +1,109 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --flip-dark: #0F172A;
+  --flip-slate: #1E2937;
+  --flip-accent: #D4AF37;
+  --flip-gold: #F59E0B;
+}
+
+body {
+  font-feature-settings: "tnum";
+}
+
+/* Beautiful card styles matching prototype */
+.card {
+  @apply bg-[#1E2937] border border-white/10 rounded-2xl shadow-xl transition-all duration-200;
+}
+
+.card:hover {
+  @apply border-white/20 shadow-2xl -translate-y-0.5;
+}
+
+.metric-card {
+  @apply bg-[#1E2937] border border-white/10 rounded-2xl p-6 transition-all;
+}
+
+.metric-card:hover {
+  @apply border-[#D4AF37]/30 -translate-y-0.5;
+}
+
+.big-button {
+  @apply flex flex-col items-center justify-center gap-3 p-8 rounded-3xl text-white font-semibold text-xl transition-all active:scale-[0.985];
+  background: linear-gradient(135deg, #1E2937 0%, #0F172A 100%);
+  border: 1px solid rgba(255,255,255,0.1);
+}
+
+.big-button:hover {
+  border-color: #D4AF37;
+  box-shadow: 0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1);
+  transform: translateY(-2px);
+}
+
+.big-button .icon {
+  @apply w-12 h-12 mb-2;
+}
+
+.nav-active {
+  @apply bg-[#D4AF37] text-[#0F172A] font-semibold;
+}
+
+/* Modal styles */
+.modal {
+  animation: modalEnter 0.2s cubic-bezier(0.32, 0.72, 0, 1);
+}
+
+@keyframes modalEnter {
+  from {
+    opacity: 0;
+    transform: translateY(20px) scale(0.98);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+/* Property / Supplier cards */
+.property-card, .supplier-card, .project-card {
+  @apply transition-all duration-200 hover:-translate-y-1 hover:shadow-2xl;
+}
+
+/* Form inputs */
+.input {
+  @apply w-full bg-[#0F172A] border border-white/20 rounded-xl px-4 py-3 text-white placeholder:text-white/40 focus:outline-none focus:border-[#D4AF37] transition-colors;
+}
+
+.btn-primary {
+  @apply bg-[#D4AF37] hover:bg-[#F59E0B] text-[#0F172A] font-semibold px-6 py-3 rounded-xl transition-all active:scale-[0.985];
+}
+
+.btn-secondary {
+  @apply bg-white/10 hover:bg-white/20 text-white font-medium px-6 py-3 rounded-xl transition-all;
+}
+
+/* Dashboard grid */
+.dashboard-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 1.25rem;
+}
+
+/* Content fade */
+.content-view {
+  animation: fadeIn 0.25s ease forwards;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* Premium badge */
+.premium-gold {
+  background: linear-gradient(90deg, #D4AF37, #F59E0B);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
