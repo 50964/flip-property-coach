@@ -1,1 +1,0 @@
-FULL_CONTENT_FROM_/tmp/dash_mcp_content.txt
