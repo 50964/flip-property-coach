@@ -1,0 +1,1 @@
+/tmp/dash_mcp_content.txt
