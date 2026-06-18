@@ -119,9 +119,9 @@ npm install          # installs new Stripe packages
 npm run dev
 ```
 
-Login with a real account (or use Demo Mode), go to **EDUCATE** or **FIND → Supplier card → Advertise**, click a pricing button → you'll be taken to real Stripe Checkout.
+Login with a real account (or use Demo Mode), go to **EDUCATE** or **FIND → Supplier card → Advertise**, click a pricing button → you’ll be taken to real Stripe Checkout.
 
-After paying with test card `4242 4242 4242 4242`, you'll be redirected back with a success toast.
+After paying with test card `4242 4242 4242 4242`, you’ll be redirected back with a success toast.
 
 ---
 
