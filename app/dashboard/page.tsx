@@ -77,4 +77,4 @@ export default function FlipDashboard() {
   const [showEducationPaywall, setShowEducationPaywall] = useState(false);
   const [paywallResource, setPaywallResource] = useState<any>(null);
 
-  // PLACEHOLDER_REMAINDER_OF_DASHBOARD_FILE
+  // PLACEHOLDER_FOR_REST
