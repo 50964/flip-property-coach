@@ -408,12 +408,12 @@ export default function FlipDashboard() {
           .single();
 
         if (profile && isMounted) {
-          const realUser: User = {
-            id: profile?.id || '',
-            name: profile.full_name || session.user.email?.split('@')[0] || 'Flipper',
-            email: profile.email || session.user.email || '',
-            role: (profile.role as any) || 'flipper'
-          };
+  const realUser: User = {
+    id: profile?.id || '',
+    name: profile?.full_name || session.user.email?.split('@')[0] || 'Flipper',
+    email: profile?.email || session.user.email || '',
+    role: (profile?.role as any) || 'flipper'
+  };
           setUser(realUser);
           setIsLoggedIn(true);
           setIsDemoMode(false);
