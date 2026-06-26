@@ -409,7 +409,7 @@ export default function FlipDashboard() {
 
         if (profile && isMounted) {
           const realUser: User = {
-            id: profile.id,
+            id: profile?.id || '',
             name: profile.full_name || session.user.email?.split('@')[0] || 'Flipper',
             email: profile.email || session.user.email || '',
             role: (profile.role as any) || 'flipper'
