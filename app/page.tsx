@@ -156,6 +156,28 @@ export default function LandingPage() {
           </div>
         </div>
       )}
+      {/* Become a Supplier - Dedicated Section */}
+<div className="bg-[#1E2937] border-t border-white/10 py-12 md:py-16">
+  <div className="max-w-4xl mx-auto px-6 text-center">
+    <h2 className="text-3xl md:text-4xl font-semibold tracking-tight mb-4">
+      Are you a tradesperson or supplier?
+    </h2>
+    <p className="text-white/70 text-base md:text-lg mb-8 max-w-xl mx-auto">
+      Join the network trusted by property flippers across the UK. Get discovered and receive real leads.
+    </p>
+    
+    <Link 
+      href="/become-supplier"
+      className="inline-flex w-full md:w-auto items-center justify-center bg-white text-[#0F172A] font-semibold px-10 py-4 rounded-2xl text-lg hover:bg-[#D4AF37] hover:text-white active:scale-[0.985] transition-all"
+    >
+      Become a Supplier
+    </Link>
+    
+    <p className="text-white/50 text-sm mt-4">
+      Free to apply • Quick approval • Start getting work
+    </p>
+  </div>
+</div>
     </div>
   );
 }
