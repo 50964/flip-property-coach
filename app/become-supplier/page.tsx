@@ -38,11 +38,19 @@ export default function BecomeSupplier() {
     setLoading(true);
 
     try {
+      // Validate environment
+      const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
+      const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
+
+      if (!supabaseUrl || !supabaseKey || supabaseUrl.includes('placeholder')) {
+        throw new Error('Supabase is not properly configured. Please check your environment variables.');
+      }
+
       // 1. Sign up user with magic link
       const { error: signUpError } = await supabase.auth.signInWithOtp({
-        email: formData.email,
+        email: formData.email.trim(),
         options: {
-          emailRedirectTo: `${window.location.origin}/supplier-dashboard`,
+          emailRedirectTo: `${window.location.origin}/auth/callback`,
         },
       });
 
@@ -55,7 +63,7 @@ export default function BecomeSupplier() {
         category: formData.category,
         location: formData.location,
         phone: formData.phone,
-        email: formData.email,
+        email: formData.email.trim(),
         website: formData.website || null,
         description: formData.description,
         status: 'pending',
@@ -69,9 +77,23 @@ export default function BecomeSupplier() {
       });
 
     } catch (error: any) {
-      toast.error('Something went wrong', {
-        description: error.message,
-      });
+      console.error('Supplier signup error:', error);
+      
+      let errorMessage = 'Something went wrong. Please try again.';
+      
+      if (error.message?.includes('Supabase')) {
+        errorMessage = error.message;
+      } else if (error.message?.includes('rate')) {
+        errorMessage = 'Too many requests. Please wait a moment and try again.';
+      } else if (error.message?.includes('invalid email')) {
+        errorMessage = 'Please enter a valid email address.';
+      } else if (error.message?.includes('already')) {
+        errorMessage = 'This email is already registered.';
+      } else if (error.status === 0 || error.message?.includes('fetch')) {
+        errorMessage = 'Network error. Please check your internet connection and try again.';
+      }
+      
+      toast.error(errorMessage);
     } finally {
       setLoading(false);
     }
