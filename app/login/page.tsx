@@ -22,20 +22,46 @@ export default function LoginPage() {
 
     setLoading(true);
 
-    const { error } = await supabase.auth.signInWithOtp({
-      email: email.trim(),
-      options: {
-        emailRedirectTo: `${window.location.origin}/dashboard`,
-      },
-    });
+    try {
+      // Validate environment
+      const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
+      const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
 
-    setLoading(false);
+      if (!supabaseUrl || !supabaseKey || supabaseUrl.includes('placeholder')) {
+        throw new Error('Supabase is not properly configured. Please check your environment variables.');
+      }
 
-    if (error) {
-      toast.error(error.message || 'Failed to send magic link. Please try again.');
-    } else {
+      const { error } = await supabase.auth.signInWithOtp({
+        email: email.trim(),
+        options: {
+          emailRedirectTo: `${window.location.origin}/auth/callback`,
+        },
+      });
+
+      if (error) {
+        throw error;
+      }
+
       setMagicLinkSent(true);
       toast.success('Magic link sent! Check your inbox (and spam folder).');
+    } catch (err: any) {
+      console.error('Magic link error:', err);
+      
+      let errorMessage = 'Failed to send magic link. Please try again.';
+      
+      if (err.message?.includes('Supabase')) {
+        errorMessage = err.message;
+      } else if (err.message?.includes('rate')) {
+        errorMessage = 'Too many requests. Please wait a moment and try again.';
+      } else if (err.message?.includes('invalid email')) {
+        errorMessage = 'Please enter a valid email address.';
+      } else if (err.status === 0 || err.message?.includes('fetch')) {
+        errorMessage = 'Network error. Please check your internet connection and try again.';
+      }
+      
+      toast.error(errorMessage);
+    } finally {
+      setLoading(false);
     }
   };
 
