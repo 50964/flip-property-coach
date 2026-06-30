@@ -13,11 +13,10 @@ export default function LandingPage() {
       <nav className="border-b border-white/10 bg-[#0F172A]/80 backdrop-blur-lg sticky top-0 z-50">
         <div className="max-w-7xl mx-auto px-6 h-20 flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <img 
-              src="/logo.png" 
-              alt="FLIP Property Coach" 
-              className="h-10 w-auto" 
-            />
+            <div className="flex items-center justify-center w-10 h-10 rounded-xl bg-gradient-to-br from-[#D4AF37] to-amber-600 text-white font-bold text-xl shadow-lg">
+              F
+            </div>
+            <span className="font-bold text-xl tracking-tight hidden sm:block">FLIP <span className="text-white/60 font-medium">Coach</span></span>
           </div>
 
           <div className="flex items-center gap-4">
@@ -28,10 +27,10 @@ export default function LandingPage() {
               <Play className="w-4 h-4" /> Watch 1-min demo
             </button>
             <Link 
-              href="#get-started"
+              href="/login"
               className="btn-primary flex items-center gap-2"
             >
-              Start free trial <ArrowRight className="w-4 h-4" />
+              Sign In <ArrowRight className="w-4 h-4" />
             </Link>
           </div>
         </div>
@@ -47,21 +46,21 @@ export default function LandingPage() {
               Trusted by 1,200+ property flippers
             </div>
 
-            <h1 className="text-6xl lg:text-7xl font-semibold tracking-tighter leading-none mb-6">
+            <h1 className="text-5xl sm:text-6xl lg:text-7xl font-semibold tracking-tighter leading-none mb-6">
               Build your<br />property flipping<br />empire.
             </h1>
-            <p className="max-w-lg text-2xl text-white/70 mb-10">
+            <p className="max-w-lg text-xl sm:text-2xl text-white/70 mb-8 sm:mb-10">
               The complete operating system for flippers.<br />Find suppliers, manage projects, track every penny, and learn from the best.
             </p>
 
             <div className="flex flex-col sm:flex-row gap-4">
               <button 
                 onClick={() => setShowDemoModal(true)}
-                className="btn-primary text-lg px-10 py-4 flex items-center justify-center gap-3 group"
+                className="btn-primary text-base sm:text-lg px-8 sm:px-10 py-4 flex items-center justify-center gap-3 group"
               >
                 Try the live demo <ArrowRight className="group-hover:translate-x-0.5 transition" />
               </button>
-              <a href="#features" className="btn-secondary text-lg px-10 py-4 flex items-center justify-center gap-3">
+              <a href="#features" className="btn-secondary text-base sm:text-lg px-8 sm:px-10 py-4 flex items-center justify-center gap-3">
                 See how it works
               </a>
             </div>
@@ -69,13 +68,13 @@ export default function LandingPage() {
           </div>
 
           {/* Right: Hero image */}
-          <div className="relative rounded-3xl overflow-hidden shadow-2xl border border-white/10">
+          <div className="relative rounded-3xl overflow-hidden shadow-2xl border border-white/10 aspect-square lg:aspect-auto h-full min-h-[400px]">
             <img 
-              src="/hero.jpg" 
+              src="https://images.unsplash.com/photo-1560518883-ce09059eeffa?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&q=80" 
               alt="FLIP Property Coach - Flip your property empire" 
-              className="w-full h-auto object-cover" 
+              className="w-full h-full object-cover absolute inset-0" 
             />
-            <div className="absolute inset-0 bg-gradient-to-t from-[#0F172A]/60 via-[#0F172A]/20 to-transparent" />
+            <div className="absolute inset-0 bg-gradient-to-t from-[#0F172A]/80 via-[#0F172A]/20 to-transparent" />
           </div>
         </div>
       </div>
@@ -115,15 +114,15 @@ export default function LandingPage() {
       {/* Bottom CTA */}
       <div id="get-started" className="bg-[#1E2937] border-t border-white/10 py-16">
         <div className="max-w-xl mx-auto text-center px-6">
-          <h3 className="text-4xl font-semibold tracking-tight mb-4">Ready to flip smarter?</h3>
-          <p className="text-white/70 mb-8">Join hundreds of flippers who are already building their empires with Flip.</p>
-          <button 
-            onClick={() => setShowDemoModal(true)}
-            className="btn-primary text-lg px-14 py-4 inline-flex items-center gap-3"
+          <h3 className="text-3xl sm:text-4xl font-semibold tracking-tight mb-4">Ready to flip smarter?</h3>
+          <p className="text-white/70 mb-8 text-sm sm:text-base">Join hundreds of flippers who are already building their empires with Flip.</p>
+          <Link 
+            href="/login"
+            className="btn-primary text-base sm:text-lg px-10 sm:px-14 py-4 inline-flex items-center gap-3 w-full sm:w-auto justify-center"
           >
-            Launch the full demo now
-          </button>
-          <p className="text-xs text-white/40 mt-6">Instant access • Your data stays in your browser for the demo</p>
+            Sign Up / In
+          </Link>
+          <p className="text-xs text-white/40 mt-6">Instant access • Start building your empire today</p>
         </div>
       </div>
 
