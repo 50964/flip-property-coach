@@ -396,154 +396,172 @@ export default function FlipDashboard() {
   useEffect(() => {
     let isMounted = true;
 
+    
     const initAuth = async () => {
-      // 1. Check for existing real Supabase session
-      const { data: { session } } = await supabase.auth.getSession();
-
-      if (session?.user && isMounted) {
-        // Fetch profile from Supabase
-        const { data: profileData } = await supabase
-          .from('profiles')
-          .select('*')
-          .eq('id', session.user.id)
-          .single();
-        const profile = profileData as Database['public']['Tables']['profiles']['Row'] | null;
-
-        if (profile && isMounted) {
-  const realUser: User = {
-    id: profile.id || '',
-    name: profile.full_name || session.user.email?.split('@')[0] || 'Flipper',
-    email: profile.email || session.user.email || '',
-    role: profile.role === 'supplier' ? 'supplier' : 'flipper'
-  };
-          setUser(realUser);
-          setIsLoggedIn(true);
-          setIsDemoMode(false);
-          storage.setUser(realUser);
-          return; // Real user wins
+      try {
+        // 1. Check for existing real Supabase session
+        const { data: { session }, error: sessionError } = await supabase.auth.getSession();
+        
+        if (sessionError) {
+          console.error("Session error:", sessionError);
         }
-      }
 
-      // 2. No real session → fallback to demo (existing behaviour)
-      if (isMounted) {
-        const savedUser = storage.getUser();
-        if (savedUser) {
-          setUser(savedUser);
-          setIsLoggedIn(true);
-          setIsDemoMode(true);
-        } else {
-          // Auto-login as demo flipper
-          const demoUser: User = {
-            id: 'u1',
-            name: 'Alex Thompson',
-            email: 'alex@flipdemo.co.uk',
+        if (session?.user && isMounted) {
+          // Fetch profile from Supabase
+          const { data: profileData, error: profileError } = await supabase
+            .from('profiles')
+            .select('*')
+            .eq('id', session.user.id)
+            .single();
+            
+          if (profileError) {
+            console.error("Profile fetch error:", profileError);
+          }
+
+          const profile = profileData as Database['public']['Tables']['profiles']['Row'] | null;
+
+          if (profile && isMounted) {
+            const realUser: User = {
+              id: profile.id || session.user.id,
+              name: profile.full_name || session.user.email?.split('@')[0] || 'Flipper',
+              email: profile.email || session.user.email || '',
+              role: profile.role === 'supplier' ? 'supplier' : 'flipper'
+            };
+            
+            setUser(realUser);
+            setIsLoggedIn(true);
+            setIsDemoMode(false);
+            try { storage.setUser(realUser); } catch(e){}
+            
+            // Load real data directly here instead of relying on state closure!
+            const uid = session.user.id;
+            try {
+              const [dbProjects, dbTeam, dbProps, dbEnquiries] = await Promise.all([
+                SupabaseData.getProjects(uid),
+                SupabaseData.getTeam(uid),
+                SupabaseData.getSavedProperties(uid),
+                SupabaseData.getMyLeadsAsFlipper(uid)
+              ]);
+              
+              if (dbProjects && dbProjects.length > 0) {
+                setProjects(dbProjects);
+                setActiveProjectId(dbProjects[0].id);
+                const projId = dbProjects[0].id;
+                const [dbTx, dbTodos] = await Promise.all([
+                  SupabaseData.getTransactions(projId),
+                  SupabaseData.getTodos(projId),
+                ]);
+                setTransactions(dbTx || []);
+                setTodos(dbTodos || []);
+              } else {
+                const defaultProj = await SupabaseData.createProject(uid, {
+                  name: 'My First Flip',
+                  propertyAddress: '123 Example Street, London',
+                  budget: 85000,
+                  spent: 0,
+                  status: 'planning',
+                  startDate: new Date().toISOString().split('T')[0],
+                  targetEndDate: '',
+                });
+                if (defaultProj) {
+                  setProjects([defaultProj]);
+                  setActiveProjectId(defaultProj.id);
+                }
+              }
+              setTeam(dbTeam || []);
+              setSavedProperties(dbProps || []);
+              setMyEnquiries(dbEnquiries || []);
+            } catch (dataErr) {
+              console.error("Data loading error:", dataErr);
+            }
+            return; // Real user fully loaded
+          }
+        }
+
+        // 2. No real session -> fallback to demo
+        if (isMounted) {
+          let savedUser = null;
+          try { savedUser = storage.getUser(); } catch(e){}
+          
+          if (savedUser) {
+            setUser(savedUser);
+            setIsLoggedIn(true);
+            setIsDemoMode(true);
+          } else {
+            const demoUser: User = {
+              id: 'u1',
+              name: 'Alex Thompson',
+              email: 'alex@flipdemo.co.uk',
+              role: 'flipper'
+            };
+            setUser(demoUser);
+            try { storage.setUser(demoUser); } catch(e){}
+            setIsLoggedIn(true);
+            setIsDemoMode(true);
+          }
+          
+          // Load demo data
+          try {
+            const savedTeam = storage.getTeam();
+            setTeam(savedTeam.length > 0 ? savedTeam : []);
+
+            const savedProjects = storage.getProjects();
+            if (savedProjects.length > 0) {
+              setProjects(savedProjects);
+            } else {
+              setProjects(initialProjects);
+            }
+
+            const savedTx = storage.getTransactions();
+            if (savedTx.length > 0) setTransactions(savedTx);
+
+            const savedTodos = storage.getTodos();
+            if (savedTodos.length > 0) setTodos(savedTodos);
+
+            const savedProps = storage.getSavedProperties();
+            setSavedProperties(savedProps);
+            
+            const demoEnquiries: Lead[] = [
+              {
+                id: 'enq1',
+                supplier_id: 's1',
+                flipper_user_id: 'u1',
+                flipper_name: 'Alex Thompson',
+                project: '12 Oak Street Flip',
+                message: 'Hi, looking for a reliable builder for a full house renovation in Manchester. Budget around £45k. Available to start in 3 weeks?',
+                status: 'quoted',
+                reply_message: 'Thanks Alex — yes we can help. I\'ve attached a rough quote for £42,500 including materials. When would you like to meet on site?',
+                created_at: new Date(Date.now() - 1000 * 60 * 60 * 24 * 2).toISOString(),
+                updated_at: new Date(Date.now() - 1000 * 60 * 60 * 24).toISOString(),
+              },
+              {
+                id: 'enq2',
+                supplier_id: 's3',
+                flipper_user_id: 'u1',
+                flipper_name: 'Alex Thompson',
+                project: '12 Oak Street Flip',
+                message: 'Need a good electrician for rewire + new consumer unit on a 3-bed flip. Any availability next month?',
+                status: 'new',
+                created_at: new Date(Date.now() - 1000 * 60 * 60 * 5).toISOString(),
+              },
+            ];
+            setMyEnquiries(demoEnquiries);
+          } catch(e) {}
+        }
+      } catch (err) {
+        console.error("Uncaught initAuth error:", err);
+        // FORCE login as demo to avoid stuck loading screen
+        if (isMounted) {
+          const fallbackUser: User = {
+            id: 'err-fallback',
+            name: 'Offline User',
+            email: 'offline@flipdemo.co.uk',
             role: 'flipper'
           };
-          setUser(demoUser);
-          storage.setUser(demoUser);
+          setUser(fallbackUser);
           setIsLoggedIn(true);
           setIsDemoMode(true);
         }
-      }
-
-      // Load persisted data or seed (demo or real)
-      if (!isDemoMode && session?.user) {
-        // REAL USER - load from Supabase
-        const uid = session.user.id;
-        
-        const [dbProjects, dbTeam, dbProps] = await Promise.all([
-          SupabaseData.getProjects(uid),
-          SupabaseData.getTeam(uid),
-          SupabaseData.getSavedProperties(uid),
-        ]);
-
-        if (dbProjects.length > 0) {
-          setProjects(dbProjects);
-          setActiveProjectId(dbProjects[0].id);
-        } else {
-          // Seed a default project for new real users
-          const defaultProj = await SupabaseData.createProject(uid, {
-            name: 'My First Flip',
-            propertyAddress: '123 Example Street, London',
-            budget: 85000,
-            spent: 0,
-            status: 'planning',
-            startDate: new Date().toISOString().split('T')[0],
-            targetEndDate: '',
-          });
-          if (defaultProj) {
-            setProjects([defaultProj]);
-            setActiveProjectId(defaultProj.id);
-          }
-        }
-
-        setTeam(dbTeam);
-        setSavedProperties(dbProps);
-
-        // Load enquiries (My Enquiries tab)
-        const dbEnquiries = await SupabaseData.getMyLeadsAsFlipper(uid);
-        setMyEnquiries(dbEnquiries);
-
-        // Load transactions & todos for active project (will be re-loaded when project changes)
-        if (dbProjects.length > 0 || projects.length > 0) {
-          const projId = (dbProjects[0] || projects[0])?.id;
-          if (projId) {
-            const [dbTx, dbTodos] = await Promise.all([
-              SupabaseData.getTransactions(projId),
-              SupabaseData.getTodos(projId),
-            ]);
-            setTransactions(dbTx);
-            setTodos(dbTodos);
-          }
-        }
-      } else {
-        // DEMO MODE - use localStorage + mocks
-        const savedTeam = storage.getTeam();
-        setTeam(savedTeam.length > 0 ? savedTeam : []);
-
-        const savedProjects = storage.getProjects();
-        if (savedProjects.length > 0) {
-          setProjects(savedProjects);
-        } else {
-          setProjects(initialProjects);
-        }
-
-        const savedTx = storage.getTransactions();
-        if (savedTx.length > 0) setTransactions(savedTx);
-
-        const savedTodos = storage.getTodos();
-        if (savedTodos.length > 0) setTodos(savedTodos);
-
-        const savedProps = storage.getSavedProperties();
-        setSavedProperties(savedProps);
-
-        // Demo enquiries (realistic examples)
-        const demoEnquiries: Lead[] = [
-          {
-            id: 'enq1',
-            supplier_id: 's1',
-            flipper_user_id: 'u1',
-            flipper_name: 'Alex Thompson',
-            project: '12 Oak Street Flip',
-            message: 'Hi, looking for a reliable builder for a full house renovation in Manchester. Budget around £45k. Available to start in 3 weeks?',
-            status: 'quoted',
-            reply_message: 'Thanks Alex — yes we can help. I\'ve attached a rough quote for £42,500 including materials. When would you like to meet on site?',
-            created_at: new Date(Date.now() - 1000 * 60 * 60 * 24 * 2).toISOString(),
-            updated_at: new Date(Date.now() - 1000 * 60 * 60 * 24).toISOString(),
-          },
-          {
-            id: 'enq2',
-            supplier_id: 's3',
-            flipper_user_id: 'u1',
-            flipper_name: 'Alex Thompson',
-            project: '12 Oak Street Flip',
-            message: 'Need a good electrician for rewire + new consumer unit on a 3-bed flip. Any availability next month?',
-            status: 'new',
-            reply_message: undefined,
-            created_at: new Date(Date.now() - 1000 * 60 * 60 * 5).toISOString(),
-          },
-        ];
-        setMyEnquiries(demoEnquiries);
       }
     };
 

@@ -133,14 +133,24 @@ export default function SupplierDashboard() {
   // Check auth on mount (same pattern as main dashboard)
   useEffect(() => {
     const checkAuth = async () => {
-      const { data: { session } } = await supabase.auth.getSession();
-      
-      if (session?.user) {
-        setIsDemoMode(false);
-        setUserId(session.user.id);
-        await loadRealData(session.user.id);
-      } else {
-        // No session → stay in demo mode
+      try {
+        const { data: { session }, error } = await supabase.auth.getSession();
+        
+        if (error) console.error("Supplier Auth Error:", error);
+        
+        if (session?.user) {
+          setIsDemoMode(false);
+          setUserId(session.user.id);
+          await loadRealData(session.user.id);
+        } else {
+          setIsDemoMode(true);
+          setListing(DEMO_LISTING);
+          setLeads(DEMO_LEADS);
+          setHasListing(true);
+          setFormData(DEMO_LISTING);
+        }
+      } catch (err) {
+        console.error("Supplier checkAuth crash:", err);
         setIsDemoMode(true);
         setListing(DEMO_LISTING);
         setLeads(DEMO_LEADS);
