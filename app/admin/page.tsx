@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   adminMetrics,
   adminSuppliers,
@@ -21,6 +21,29 @@ export default function AdminPanel() {
   const [suppliers, setSuppliers] = useState(adminSuppliers);
   const [users, setUsers] = useState(adminUsers);
   const [toast, setToast] = useState<{ message: string; type: 'success' | 'error' } | null>(null);
+
+  // Auth guard — redirect non-admin users
+  useEffect(() => {
+    import('@/lib/supabase').then(({ createClient }) => {
+      const supabase = createClient();
+      supabase.auth.getUser().then(({ data: { user } }) => {
+        if (!user) {
+          window.location.href = '/login';
+          return;
+        }
+        supabase
+          .from('profiles')
+          .select('role')
+          .eq('id', user.id)
+          .single()
+          .then(({ data: profile }: { data: { role: string } | null }) => {
+            if (!profile || profile.role !== 'admin') {
+              window.location.href = '/dashboard';
+            }
+          });
+      });
+    });
+  }, []);
 
   const showToast = (message: string, type: 'success' | 'error' = 'success') => {
     setToast({ message, type });

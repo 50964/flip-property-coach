@@ -655,6 +655,11 @@ export default function FlipDashboard() {
     toast.success('Property saved to your watchlist');
   };
 
+  const removeProperty = (propertyId: string) => {
+    setSavedProperties(prev => prev.filter(p => p.id !== propertyId));
+    toast.success('Removed from watchlist');
+  };
+
   // ==================== FULL CONTACT SUPPLIER FLOW FROM FIND ====================
   const contactSupplier = (supplier: Supplier) => {
     setSelectedSupplierForContact(supplier);
@@ -728,7 +733,7 @@ export default function FlipDashboard() {
     setTodos(todos.map(t => t.id === id ? { ...t, completed: !t.completed } : t));
   };
 
-  const addTodo = () => {
+  const addTodo = async () => {
     if (!newTodoText.trim()) return;
     const newTodo: Todo = {
       id: 'td' + Date.now(),
@@ -737,10 +742,23 @@ export default function FlipDashboard() {
       completed: false,
       dueDate: format(addDays(new Date(), 7), 'yyyy-MM-dd')
     };
-    setTodos([...todos, newTodo]);
+    setTodos(prev => [...prev, newTodo]);
     setNewTodoText('');
     setShowAddTodo(false);
     toast.success('Task added');
+    // Persist to Supabase for real users
+    if (!isDemoMode && user?.id) {
+      try {
+        await SupabaseData.addTodo(user.id, { ...newTodo });
+      } catch (e) {
+        console.error('Failed to persist todo:', e);
+      }
+    }
+  };
+
+  const deleteTodo = (id: string) => {
+    setTodos(prev => prev.filter(t => t.id !== id));
+    toast.success('Task removed');
   };
 
   const projectTodos = todos.filter(t => t.projectId === activeProjectId);
@@ -759,26 +777,31 @@ export default function FlipDashboard() {
   const currentProfit = totalIncome - totalExpenses;
   const budgetUsed = activeProject ? (activeProject.spent / activeProject.budget) * 100 : 0;
 
-  // Chart data
-  const cashflowData = [
-    { month: 'Mar', income: 0, expenses: 24500 },
-    { month: 'Apr', income: 0, expenses: 31200 },
-    { month: 'May', income: 8500, expenses: 28900 },
-    { month: 'Jun', income: 0, expenses: 12400 },
-    { month: 'Jul', income: 0, expenses: 8500 },
-  ];
+  // Chart data — derived from real transactions
+  const cashflowData = (() => {
+    const monthMap: Record<string, { month: string; income: number; expenses: number }> = {};
+    projectTransactions.forEach(tx => {
+      const m = tx.date ? format(new Date(tx.date), 'MMM') : 'Unknown';
+      if (!monthMap[m]) monthMap[m] = { month: m, income: 0, expenses: 0 };
+      if (tx.type === 'income') monthMap[m].income += tx.amount;
+      else monthMap[m].expenses += tx.amount;
+    });
+    const entries = Object.values(monthMap);
+    return entries.length > 0 ? entries : [{ month: format(new Date(), 'MMM'), income: 0, expenses: 0 }];
+  })();
 
-  const expenseBreakdown = [
-    { name: 'Purchase', value: 24500 },
-    { name: 'Labour', value: 18500 },
-    { name: 'Materials', value: 12400 },
-    { name: 'Other', value: 6800 },
-  ];
+  const expenseBreakdown = (() => {
+    const catMap: Record<string, number> = {};
+    projectTransactions.filter(tx => tx.type === 'expense').forEach(tx => {
+      catMap[tx.category] = (catMap[tx.category] || 0) + tx.amount;
+    });
+    const entries = Object.entries(catMap).map(([name, value]) => ({ name, value }));
+    return entries.length > 0 ? entries : [{ name: 'No expenses yet', value: 1 }];
+  })();
 
   // Add transaction
-  const addTransaction = () => {
+  const addTransaction = async () => {
     if (!newTx.description || newTx.amount <= 0) return;
-
     const tx: Transaction = {
       id: 'tx' + Date.now(),
       projectId: activeProjectId,
@@ -788,21 +811,28 @@ export default function FlipDashboard() {
       amount: newTx.amount,
       type: newTx.type
     };
-
-    const updatedTx = [...transactions, tx];
-    setTransactions(updatedTx);
-
-    // Update project spent if expense
+    setTransactions(prev => [...prev, tx]);
     if (newTx.type === 'expense') {
-      const updatedProjects = projects.map(p => 
+      setProjects(prev => prev.map(p => 
         p.id === activeProjectId ? { ...p, spent: p.spent + newTx.amount } : p
-      );
-      setProjects(updatedProjects);
+      ));
     }
-
     setNewTx({ description: '', amount: 0, type: 'expense', category: 'Materials' });
     setShowAddTransaction(false);
     toast.success('Transaction added');
+    // Persist to Supabase for real users
+    if (!isDemoMode && user?.id) {
+      try {
+        await SupabaseData.addTransaction(user.id, { ...tx });
+      } catch (e) {
+        console.error('Failed to persist transaction:', e);
+      }
+    }
+  };
+
+  const deleteTransaction = async (txId: string) => {
+    setTransactions(prev => prev.filter(t => t.id !== txId));
+    toast.success('Transaction removed');
   };
 
   // Export CSV for accountant
@@ -1098,12 +1128,21 @@ export default function FlipDashboard() {
                       <div className="text-amber-400">{prop.status}</div>
                     </div>
 
-                    <button 
-                      onClick={() => saveProperty(prop)}
-                      className="mt-5 w-full btn-secondary text-sm py-2.5"
-                    >
-                      Save to Watchlist
-                    </button>
+                    {savedProperties.some(p => p.id === prop.id) ? (
+                      <button 
+                        onClick={() => removeProperty(prop.id)}
+                        className="mt-5 w-full py-2.5 rounded-xl text-sm font-medium bg-white/10 text-white/60 hover:bg-red-500/20 hover:text-red-400 transition-all"
+                      >
+                        ✓ Saved — Click to Remove
+                      </button>
+                    ) : (
+                      <button 
+                        onClick={() => saveProperty(prop)}
+                        className="mt-5 w-full btn-secondary text-sm py-2.5"
+                      >
+                        Save to Watchlist
+                      </button>
+                    )}
                   </div>
                 ))}
               </div>
@@ -1207,20 +1246,26 @@ export default function FlipDashboard() {
                       <th className="text-left py-3 font-normal">Description</th>
                       <th className="text-left py-3 font-normal">Category</th>
                       <th className="text-right py-3 font-normal">Amount</th>
+                      <th className="py-3 w-8"></th>
                     </tr>
                   </thead>
                   <tbody>
                     {projectTransactions.length > 0 ? projectTransactions.map(tx => (
-                      <tr key={tx.id} className="border-b border-white/5 hover:bg-white/5">
+                      <tr key={tx.id} className="border-b border-white/5 hover:bg-white/5 group">
                         <td className="py-3 text-white/70">{tx.date}</td>
                         <td className="py-3">{tx.description}</td>
                         <td className="py-3 text-white/60">{tx.category}</td>
                         <td className={`py-3 text-right font-medium ${tx.type === 'income' ? 'text-emerald-400' : 'text-red-400'}`}>
                           {tx.type === 'income' ? '+' : '-'}£{tx.amount.toLocaleString()}
                         </td>
+                        <td className="py-3 pl-3">
+                          <button onClick={() => deleteTransaction(tx.id)} className="opacity-0 group-hover:opacity-100 text-white/30 hover:text-red-400 transition-all">
+                            <X className="w-4 h-4" />
+                          </button>
+                        </td>
                       </tr>
                     )) : (
-                      <tr><td colSpan={4} className="py-8 text-center text-white/50">No transactions yet. Add your first one above.</td></tr>
+                      <tr><td colSpan={5} className="py-8 text-center text-white/50">No transactions yet. Add your first one above.</td></tr>
                     )}
                   </tbody>
                 </table>
@@ -1269,14 +1314,16 @@ export default function FlipDashboard() {
                   {projectTodos.length > 0 ? projectTodos.map(todo => (
                     <div 
                       key={todo.id} 
-                      onClick={() => toggleTodo(todo.id)}
-                      className={`flex items-center gap-3 p-3 rounded-xl cursor-pointer transition-all ${todo.completed ? 'bg-white/5 line-through text-white/50' : 'hover:bg-white/5'}`}
+                      className={`flex items-center gap-3 p-3 rounded-xl transition-all group ${todo.completed ? 'bg-white/5' : 'hover:bg-white/5'}`}
                     >
-                      <div className={`w-5 h-5 rounded border flex-shrink-0 flex items-center justify-center ${todo.completed ? 'bg-[#D4AF37] border-[#D4AF37]' : 'border-white/30'}`}>
+                      <div onClick={() => toggleTodo(todo.id)} className={`w-5 h-5 rounded border flex-shrink-0 flex items-center justify-center cursor-pointer ${todo.completed ? 'bg-[#D4AF37] border-[#D4AF37]' : 'border-white/30'}`}>
                         {todo.completed && <CheckCircle className="w-3.5 h-3.5 text-[#0F172A]" />}
                       </div>
-                      <div className="flex-1">{todo.text}</div>
+                      <div onClick={() => toggleTodo(todo.id)} className={`flex-1 cursor-pointer ${todo.completed ? 'line-through text-white/50' : ''}`}>{todo.text}</div>
                       {todo.dueDate && <div className="text-xs text-white/40 tabular-nums">{todo.dueDate}</div>}
+                      <button onClick={(e) => { e.stopPropagation(); deleteTodo(todo.id); }} className="opacity-0 group-hover:opacity-100 text-white/30 hover:text-red-400 transition-all ml-1 flex-shrink-0">
+                        <X className="w-3.5 h-3.5" />
+                      </button>
                     </div>
                   )) : <div className="text-white/50 py-4">No tasks yet. Add one!</div>}
                 </div>

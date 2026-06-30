@@ -273,7 +273,7 @@ export default function SupplierDashboard() {
     setReplyMessage('');
   };
 
-  const handleBuyAd = () => {
+  const handleBuyAd = async () => {
     if (isDemoMode) {
       toast.success('Stripe Checkout would open here', {
         description: 'In production: redirects to real Stripe for £1,200 annual premium ad.'
@@ -284,7 +284,27 @@ export default function SupplierDashboard() {
         });
       }, 1200);
     } else {
-      window.location.href = '/api/create-checkout-session?type=supplier_ad';
+      try {
+        const { data: { user: currentUser } } = await supabase.auth.getUser();
+        const res = await fetch('/api/create-checkout-session', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            paymentType: 'ad-yearly',
+            userEmail: currentUser?.email || '',
+            userId: currentUser?.id || '',
+          }),
+        });
+        const data = await res.json();
+        if (data.url) {
+          window.location.href = data.url;
+        } else {
+          throw new Error(data.error || 'Failed to start checkout');
+        }
+      } catch (err) {
+        toast.error('Could not start payment. Please try again.');
+        console.error(err);
+      }
     }
   };
 
