@@ -85,9 +85,9 @@ export default function BecomeSupplier() {
       
       if (error.message?.includes('Supabase')) {
         errorMessage = error.message;
-      } else if (error.message?.includes('rate')) {
+      } else if (error.message?.includes('rate') || error.message?.includes('over_email_send_rate_limit')) {
         markMagicLinkRequested(emailValue);
-        errorMessage = formatCooldownMessage(getMagicLinkCooldownRemaining(emailValue) || 60_000);
+        errorMessage = 'Supabase email rate limit exceeded (Free tier allows ~3 emails/hour). Please wait or configure Custom SMTP in your Supabase dashboard.';
       } else if (error.message?.includes('invalid email')) {
         errorMessage = 'Please enter a valid email address.';
       } else if (error.message?.includes('already')) {

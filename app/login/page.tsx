@@ -52,9 +52,9 @@ export default function LoginPage() {
       
       if (err.message?.includes('Supabase')) {
         errorMessage = err.message;
-      } else if (err.message?.includes('rate')) {
+      } else if (err.message?.includes('rate') || err.message?.includes('over_email_send_rate_limit')) {
         markMagicLinkRequested(emailValue);
-        errorMessage = formatCooldownMessage(getMagicLinkCooldownRemaining(emailValue) || 60_000);
+        errorMessage = 'Supabase email rate limit exceeded (Free tier allows ~3 emails/hour). Please wait or configure Custom SMTP in your Supabase dashboard.';
       } else if (err.message?.includes('invalid email')) {
         errorMessage = 'Please enter a valid email address.';
       } else if (err.status === 0 || err.message?.includes('fetch')) {
