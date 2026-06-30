@@ -1,12 +1,7 @@
 import { createBrowserClient } from '@supabase/ssr'
 import { Database } from '@/types/supabase'
-
-const PLACEHOLDER_URL = 'https://placeholder.supabase.co'
-const PLACEHOLDER_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.placeholder'
+import { SUPABASE_ANON_KEY, SUPABASE_URL } from './supabase-config'
 
 export function createClient() {
-  const url = process.env.NEXT_PUBLIC_SUPABASE_URL || PLACEHOLDER_URL
-  const key = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || PLACEHOLDER_KEY
-
-  return createBrowserClient<Database>(url, key)
+  return createBrowserClient<Database>(SUPABASE_URL, SUPABASE_ANON_KEY)
 }

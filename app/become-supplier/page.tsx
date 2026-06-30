@@ -38,12 +38,20 @@ export default function BecomeSupplier() {
     setLoading(true);
 
     try {
-      // Validate environment
-      const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
-      const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
-
-      if (!supabaseUrl || !supabaseKey || supabaseUrl.includes('placeholder')) {
-        throw new Error('Supabase is not properly configured. Please check your environment variables.');
+      if (typeof window !== 'undefined') {
+        window.localStorage.setItem(
+          'flip_pending_supplier_application',
+          JSON.stringify({
+            name: formData.name,
+            category: formData.category,
+            description: formData.description,
+            location: formData.location,
+            price_range: '',
+            contact_email: formData.email.trim(),
+            contact_phone: formData.phone,
+            website: formData.website || '',
+          })
+        );
       }
 
       // 1. Sign up user with magic link
@@ -55,21 +63,6 @@ export default function BecomeSupplier() {
       });
 
       if (signUpError) throw signUpError;
-
-      // 2. Create supplier record (will be linked after they verify email)
-      // For now we create it with pending status
-      const { error: insertError } = await supabase.from('suppliers').insert({
-        name: formData.name,
-        category: formData.category,
-        location: formData.location,
-        phone: formData.phone,
-        email: formData.email.trim(),
-        website: formData.website || null,
-        description: formData.description,
-        status: 'pending',
-      });
-
-      if (insertError) throw insertError;
 
       setSubmitted(true);
       toast.success('Application submitted!', {

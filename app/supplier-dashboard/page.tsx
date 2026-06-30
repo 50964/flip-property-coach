@@ -87,6 +87,26 @@ export default function SupplierDashboard() {
         const myLeads = await SupabaseData.getLeadsForSupplier(myListing.id);
         setLeads(myLeads);
       } else {
+        const pendingDraftRaw =
+          typeof window !== 'undefined'
+            ? window.localStorage.getItem('flip_pending_supplier_application')
+            : null;
+
+        if (pendingDraftRaw) {
+          const pendingDraft = JSON.parse(pendingDraftRaw);
+          const createdListing = await SupabaseData.createOrUpdateSupplierListing(uid, pendingDraft);
+
+          if (createdListing) {
+            window.localStorage.removeItem('flip_pending_supplier_application');
+            setListing(createdListing);
+            setHasListing(true);
+            setFormData(createdListing);
+            setLeads([]);
+            setIsCreatingListing(false);
+            return;
+          }
+        }
+
         setListing(null);
         setHasListing(false);
         setLeads([]);

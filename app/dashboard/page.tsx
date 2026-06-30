@@ -22,6 +22,7 @@ import { storage } from '@/lib/storage';
 import { mockSuppliers, mockProperties, initialProjects, initialTransactions, initialTodos } from '@/lib/mockData';
 import { createClient } from '@/lib/supabase';
 import * as SupabaseData from '@/lib/supabase-data';
+import type { Database } from '@/types/supabase';
 import jsPDF from 'jspdf';
 import 'jspdf-autotable';
 
@@ -401,18 +402,19 @@ export default function FlipDashboard() {
 
       if (session?.user && isMounted) {
         // Fetch profile from Supabase
-        const { data: profile } = await supabase
+        const { data: profileData } = await supabase
           .from('profiles')
           .select('*')
           .eq('id', session.user.id)
           .single();
+        const profile = profileData as Database['public']['Tables']['profiles']['Row'] | null;
 
         if (profile && isMounted) {
   const realUser: User = {
-    id: profile?.id || '',
-    name: profile?.full_name || session.user.email?.split('@')[0] || 'Flipper',
-    email: profile?.email || session.user.email || '',
-    role: (profile?.role as any) || 'flipper'
+    id: profile.id || '',
+    name: profile.full_name || session.user.email?.split('@')[0] || 'Flipper',
+    email: profile.email || session.user.email || '',
+    role: profile.role === 'supplier' ? 'supplier' : 'flipper'
   };
           setUser(realUser);
           setIsLoggedIn(true);
@@ -552,18 +554,19 @@ export default function FlipDashboard() {
       if (!isMounted) return;
 
       if (event === 'SIGNED_IN' && session?.user) {
-        const { data: profile } = await supabase
+        const { data: profileData } = await supabase
           .from('profiles')
           .select('*')
           .eq('id', session.user.id)
           .single();
+        const profile = profileData as Database['public']['Tables']['profiles']['Row'] | null;
 
         if (profile) {
           const realUser: User = {
             id: profile.id,
             name: profile.full_name || session.user.email?.split('@')[0] || 'Flipper',
             email: profile.email || session.user.email || '',
-            role: (profile.role as any) || 'flipper'
+            role: profile.role === 'supplier' ? 'supplier' : 'flipper'
           };
           setUser(realUser);
           setIsLoggedIn(true);

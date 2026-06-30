@@ -1,6 +1,7 @@
 import { createServerClient } from '@supabase/ssr'
 import { NextResponse } from 'next/server'
 import type { NextRequest } from 'next/server'
+import { SUPABASE_ANON_KEY, SUPABASE_URL } from './lib/supabase-config'
 
 export async function middleware(request: NextRequest) {
   let response = NextResponse.next({
@@ -10,15 +11,7 @@ export async function middleware(request: NextRequest) {
   })
 
   try {
-    const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL
-    const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
-
-    if (!supabaseUrl || !supabaseAnonKey) {
-      console.error('Missing Supabase environment variables')
-      return response
-    }
-
-    const supabase = createServerClient(supabaseUrl, supabaseAnonKey, {
+    const supabase = createServerClient(SUPABASE_URL, SUPABASE_ANON_KEY, {
       cookies: {
         get(name: string) {
           return request.cookies.get(name)?.value

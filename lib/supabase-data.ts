@@ -2,7 +2,7 @@ import { createClient } from './supabase';
 import type { Project, Transaction, Todo, TeamMember, Property, SupplierListing, Lead } from '@/types';
 
 function getSupabase() {
-  return createClient();
+  return createClient() as any;
 }
 
 type DbProjectStatus = 'planning' | 'in_progress' | 'completed' | 'on_hold';

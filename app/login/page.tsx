@@ -23,14 +23,6 @@ export default function LoginPage() {
     setLoading(true);
 
     try {
-      // Validate environment
-      const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
-      const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
-
-      if (!supabaseUrl || !supabaseKey || supabaseUrl.includes('placeholder')) {
-        throw new Error('Supabase is not properly configured. Please check your environment variables.');
-      }
-
       const { error } = await supabase.auth.signInWithOtp({
         email: email.trim(),
         options: {
