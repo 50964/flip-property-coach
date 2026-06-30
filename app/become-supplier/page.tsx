@@ -2,6 +2,7 @@
 
 import React, { useState } from 'react';
 import { createClient } from '@/lib/supabase';
+import { formatCooldownMessage, getMagicLinkCooldownRemaining, markMagicLinkRequested } from '@/lib/magic-link';
 import { toast } from 'sonner';
 import Link from 'next/link';
 
@@ -35,6 +36,13 @@ export default function BecomeSupplier() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    const emailValue = formData.email.trim();
+    const cooldownRemaining = getMagicLinkCooldownRemaining(emailValue);
+    if (cooldownRemaining > 0) {
+      toast.error(formatCooldownMessage(cooldownRemaining));
+      return;
+    }
+
     setLoading(true);
 
     try {
@@ -56,7 +64,7 @@ export default function BecomeSupplier() {
 
       // 1. Sign up user with magic link
       const { error: signUpError } = await supabase.auth.signInWithOtp({
-        email: formData.email.trim(),
+        email: emailValue,
         options: {
           emailRedirectTo: `${window.location.origin}/auth/callback`,
         },
@@ -64,6 +72,7 @@ export default function BecomeSupplier() {
 
       if (signUpError) throw signUpError;
 
+      markMagicLinkRequested(emailValue);
       setSubmitted(true);
       toast.success('Application submitted!', {
         description: 'Check your email for a magic link to complete your registration.',
@@ -77,7 +86,8 @@ export default function BecomeSupplier() {
       if (error.message?.includes('Supabase')) {
         errorMessage = error.message;
       } else if (error.message?.includes('rate')) {
-        errorMessage = 'Too many requests. Please wait a moment and try again.';
+        markMagicLinkRequested(emailValue);
+        errorMessage = formatCooldownMessage(getMagicLinkCooldownRemaining(emailValue) || 60_000);
       } else if (error.message?.includes('invalid email')) {
         errorMessage = 'Please enter a valid email address.';
       } else if (error.message?.includes('already')) {

@@ -3,6 +3,7 @@
 import React, { useState } from 'react';
 import { ArrowLeft, Mail, CheckCircle, Loader2 } from 'lucide-react';
 import { createClient } from '@/lib/supabase';
+import { formatCooldownMessage, getMagicLinkCooldownRemaining, markMagicLinkRequested } from '@/lib/magic-link';
 import { toast } from 'sonner';
 import Link from 'next/link';
 
@@ -20,11 +21,18 @@ export default function LoginPage() {
       return;
     }
 
+    const emailValue = email.trim();
+    const cooldownRemaining = getMagicLinkCooldownRemaining(emailValue);
+    if (cooldownRemaining > 0) {
+      toast.error(formatCooldownMessage(cooldownRemaining));
+      return;
+    }
+
     setLoading(true);
 
     try {
       const { error } = await supabase.auth.signInWithOtp({
-        email: email.trim(),
+        email: emailValue,
         options: {
           emailRedirectTo: `${window.location.origin}/auth/callback`,
         },
@@ -34,6 +42,7 @@ export default function LoginPage() {
         throw error;
       }
 
+      markMagicLinkRequested(emailValue);
       setMagicLinkSent(true);
       toast.success('Magic link sent! Check your inbox (and spam folder).');
     } catch (err: any) {
@@ -44,7 +53,8 @@ export default function LoginPage() {
       if (err.message?.includes('Supabase')) {
         errorMessage = err.message;
       } else if (err.message?.includes('rate')) {
-        errorMessage = 'Too many requests. Please wait a moment and try again.';
+        markMagicLinkRequested(emailValue);
+        errorMessage = formatCooldownMessage(getMagicLinkCooldownRemaining(emailValue) || 60_000);
       } else if (err.message?.includes('invalid email')) {
         errorMessage = 'Please enter a valid email address.';
       } else if (err.status === 0 || err.message?.includes('fetch')) {
