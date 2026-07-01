@@ -12,7 +12,7 @@ export async function POST(req: Request) {
     const parsed = bodySchema.parse(json)
 
     // Validate caller session
-    const supabase = createServerClient(SUPABASE_URL, process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!)
+    const supabase = await createServerClient()
     const { data: { user } } = await supabase.auth.getUser()
     if (!user) return NextResponse.json({ error: 'Not authenticated' }, { status: 401 })
 
