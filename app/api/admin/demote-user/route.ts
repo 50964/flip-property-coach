@@ -22,6 +22,12 @@ export async function POST(req: Request) {
     if (!serviceRole) return NextResponse.json({ error: 'Service role not configured' }, { status: 500 })
     const svc = createClient(SUPABASE_URL, serviceRole, { auth: { persistSession: false } })
 
+    const { adminLimiter } = await import('@/lib/rate-limiter')
+    const rl = await adminLimiter.take(user.id)
+    if (rl.remaining < 0) {
+      return NextResponse.json({ error: 'Too many requests' }, { status: 429, headers: { 'Retry-After': String(Math.ceil((rl.resetMs || 0)/1000)) } })
+    }
+
     const { error } = await svc.from('profiles').update({ role: 'user' }).eq('id', parsed.userId)
     if (error) return NextResponse.json({ error: error.message }, { status: 500 })
 

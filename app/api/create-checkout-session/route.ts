@@ -8,6 +8,8 @@ const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
   apiVersion: '2024-06-20',
 });
 
+import { paymentLimiter } from '@/lib/rate-limiter'
+
 export async function POST(request: NextRequest) {
   try {
     // Server-side auth: ensure request is from an authenticated user
@@ -26,6 +28,12 @@ export async function POST(request: NextRequest) {
     const user = userData?.user || null
 
     if (!user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+
+    // Rate limit by user id
+    const rl = await paymentLimiter.take(user.id)
+    if (rl.remaining < 0) {
+      return NextResponse.json({ error: 'Too many requests' }, { status: 429, headers: { 'Retry-After': String(Math.ceil((rl.resetMs || 0)/1000)) } })
+    }
 
     const { paymentType, userEmail, userId } = await request.json();
 

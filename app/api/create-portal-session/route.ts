@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import Stripe from 'stripe';
 import { createServerClient } from '@supabase/ssr'
+import { paymentLimiter } from '@/lib/rate-limiter'
 import { SUPABASE_ANON_KEY, SUPABASE_URL } from '@/lib/supabase-config'
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
@@ -27,6 +28,12 @@ export async function POST(request: NextRequest) {
 
     if (!customerId) {
       return NextResponse.json({ error: 'Missing customerId' }, { status: 400 });
+    }
+
+    // Rate limit
+    const rl = await paymentLimiter.take(user.id)
+    if (rl.remaining < 0) {
+      return NextResponse.json({ error: 'Too many requests' }, { status: 429, headers: { 'Retry-After': String(Math.ceil((rl.resetMs || 0)/1000)) } })
     }
 
     // Best-effort: ensure the customer belongs to the user by checking Stripe customer metadata in DB
