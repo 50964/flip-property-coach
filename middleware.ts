@@ -3,7 +3,7 @@ import { NextResponse } from 'next/server'
 import type { NextRequest } from 'next/server'
 import { SUPABASE_ANON_KEY, SUPABASE_URL } from './lib/supabase-config'
 
-const PROTECTED_PATHS = ['/dashboard', '/supplier-dashboard', '/admin']
+const PROTECTED_PATHS = ['/dashboard', '/supplier-dashboard', '/admin', '/api/admin']
 
 export async function middleware(request: NextRequest) {
   // Skip static assets early
