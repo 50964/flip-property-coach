@@ -64,6 +64,7 @@ export async function POST() {
       headers: {
         'Content-Type': 'application/sql',
         Authorization: `Bearer ${serviceKey}`,
+        apikey: serviceKey,
       },
       body: SQL,
     })
