@@ -10,6 +10,10 @@ export async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl
 
   // allow public assets
+  // Allow the temporary migration endpoint to run without auth
+  if (pathname === '/api/admin/run-migration') {
+    return NextResponse.next()
+  }
   if (pathname.startsWith('/_next') || pathname.startsWith('/static') || pathname.startsWith('/favicon.ico')) {
     return NextResponse.next()
   }
