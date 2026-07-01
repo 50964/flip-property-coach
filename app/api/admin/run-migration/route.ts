@@ -28,20 +28,14 @@ BEGIN
   END IF;
 END$$;
 
--- Optional: allow SELECT for users with profiles.role = 'admin'
+-- Service-role-only policy (avoid referencing profiles table)
 DO $$
 BEGIN
-  IF NOT EXISTS (SELECT 1 FROM pg_policy WHERE polname = 'admin_audit_admins_view') THEN
+  IF NOT EXISTS (SELECT 1 FROM pg_policy WHERE polname = 'admin_audit_service_role_policy') THEN
     EXECUTE $$
-      CREATE POLICY admin_audit_admins_view ON public.admin_audit
-      FOR SELECT
-      USING (
-        EXISTS (
-          SELECT 1 FROM public.profiles p
-          WHERE p.id = current_setting('request.jwt.claims.user_id', true)::uuid
-          AND p.role = 'admin'
-        )
-      );
+      CREATE POLICY admin_audit_service_role_policy ON public.admin_audit
+      FOR ALL
+      USING ( auth.role() = 'service_role' );
     $$;
   END IF;
 END$$;
