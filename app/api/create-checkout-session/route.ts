@@ -1,5 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import Stripe from 'stripe';
+import { createServerClient } from '@supabase/ssr'
+import { SUPABASE_ANON_KEY, SUPABASE_URL } from '@/lib/supabase-config'
 
 // Initialize Stripe with secret key
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
@@ -8,10 +10,32 @@ const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
 
 export async function POST(request: NextRequest) {
   try {
+    // Server-side auth: ensure request is from an authenticated user
+    const supabase = createServerClient(SUPABASE_URL, SUPABASE_ANON_KEY, {
+      cookies: {
+        get(name: string) {
+          return request.cookies.get(name)?.value
+        },
+        // set/remove are no-ops in this API context
+        set() {},
+        remove() {},
+      },
+    })
+
+    const { data: userData } = await supabase.auth.getUser()
+    const user = userData?.user || null
+
+    if (!user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+
     const { paymentType, userEmail, userId } = await request.json();
 
     if (!paymentType) {
       return NextResponse.json({ error: 'Missing paymentType' }, { status: 400 });
+    }
+
+    // Ensure userId (if provided) matches authenticated user
+    if (userId && userId !== user.id) {
+      return NextResponse.json({ error: 'userId does not match authenticated user' }, { status: 403 })
     }
 
     let sessionConfig: Stripe.Checkout.SessionCreateParams;
