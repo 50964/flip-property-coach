@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server'
 import { z } from 'zod'
 import { createClient } from '@supabase/supabase-js'
-import { createServerClient } from '@/lib/supabase/server'
+import { createClient as createServerClient } from '@/lib/supabase/server'
 import { SUPABASE_URL } from '@/lib/supabase-config'
 
 const bodySchema = z.object({ userId: z.string().min(1), role: z.string().min(1) })
