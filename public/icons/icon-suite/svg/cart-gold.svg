@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1024" height="1024" viewBox="0 0 1024 1024" fill="none">
+  <!-- Background rounded square -->
+  <rect width="1024" height="1024" rx="180" fill="#1A1A1A"/>
+  
+  <!-- Shopping Cart -->
+  <path d="M280 320 L320 320 L360 600 L720 600 L760 360 L360 360" fill="none" stroke="#C9A227" stroke-width="48" stroke-linecap="round" stroke-linejoin="round"/>
+  <!-- Cart body -->
+  <rect x="360" y="360" width="400" height="240" rx="20" fill="#C9A227"/>
+  <!-- Wheels -->
+  <circle cx="420" cy="680" r="48" fill="#C9A227"/>
+  <circle cx="680" cy="680" r="48" fill="#C9A227"/>
+  <!-- Handle -->
+  <path d="M760 360 Q820 280 880 320" fill="none" stroke="#C9A227" stroke-width="48" stroke-linecap="round"/>
+</svg>

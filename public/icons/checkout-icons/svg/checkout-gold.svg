@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1024" height="1024" viewBox="0 0 1024 1024" fill="none">
+  <!-- Background rounded square -->
+  <rect width="1024" height="1024" rx="180" fill="#1A1A1A"/>
+  
+  <!-- Stacked layers -->
+  <rect x="256" y="420" width="512" height="100" rx="20" fill="#C9A227"/>
+  <rect x="256" y="310" width="512" height="100" rx="20" fill="#D4AF37"/>
+  <rect x="256" y="200" width="512" height="100" rx="20" fill="#E8C872"/>
+  
+  <!-- Checkmark integrated -->
+  <path d="M380 520 L460 600 L680 380" stroke="#1A1A1A" stroke-width="48" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M380 520 L460 600 L680 380" stroke="#C9A227" stroke-width="32" stroke-linecap="round" stroke-linejoin="round"/>
+</svg>

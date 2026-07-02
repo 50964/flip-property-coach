@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1024" height="1024" viewBox="0 0 1024 1024" fill="none">
+  <!-- Background rounded square -->
+  <rect width="1024" height="1024" rx="180" fill="#1A1A1A"/>
+  
+  <!-- User icon -->
+  <!-- Head -->
+  <circle cx="512" cy="380" r="120" fill="#C9A227"/>
+  <!-- Body -->
+  <path d="M280 720 Q512 580 744 720" fill="none" stroke="#C9A227" stroke-width="80" stroke-linecap="round"/>
+  <path d="M320 880 Q512 780 704 880" fill="none" stroke="#C9A227" stroke-width="60" stroke-linecap="round"/>
+</svg>

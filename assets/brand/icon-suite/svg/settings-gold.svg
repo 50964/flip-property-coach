@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1024" height="1024" viewBox="0 0 1024 1024" fill="none">
+  <!-- Background rounded square -->
+  <rect width="1024" height="1024" rx="180" fill="#1A1A1A"/>
+  
+  <!-- Gear / Settings -->
+  <circle cx="512" cy="512" r="140" fill="#C9A227"/>
+  <!-- Teeth -->
+  <path d="M512 280 L560 320 L512 360 L464 320 Z" fill="#C9A227"/>
+  <path d="M744 512 L704 560 L664 512 L704 464 Z" fill="#C9A227"/>
+  <path d="M512 744 L464 704 L512 664 L560 704 Z" fill="#C9A227"/>
+  <path d="M280 512 L320 464 L360 512 L320 560 Z" fill="#C9A227"/>
+  <!-- Inner circle -->
+  <circle cx="512" cy="512" r="80" fill="#1A1A1A"/>
+</svg>

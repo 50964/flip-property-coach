@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1024" height="1024" viewBox="0 0 1024 1024" fill="none">
+  <!-- Background rounded square -->
+  <rect width="1024" height="1024" rx="180" fill="#1A1A1A"/>
+  
+  <!-- House -->
+  <!-- Roof -->
+  <path d="M280 480 L512 280 L744 480" fill="#C9A227"/>
+  <!-- House body -->
+  <rect x="320" y="480" width="384" height="280" rx="20" fill="#C9A227"/>
+  <!-- Door -->
+  <rect x="460" y="580" width="104" height="180" rx="12" fill="#1A1A1A"/>
+  <!-- Window -->
+  <rect x="560" y="540" width="80" height="80" rx="8" fill="#1A1A1A"/>
+</svg>
