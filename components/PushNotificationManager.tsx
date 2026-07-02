@@ -49,7 +49,7 @@ export default function PushNotificationManager({ userId }: PushNotificationMana
         // Show a test notification
         new Notification('Flip Property Coach', {
           body: 'Notifications are now active. You will be alerted in real time.',
-          icon: '/logo.png',
+          icon: '/icons/logos/logo-gold-512.jpg',
         });
       } else if (result === 'denied') {
         toast.error('Notifications blocked', {
@@ -67,8 +67,8 @@ export default function PushNotificationManager({ userId }: PushNotificationMana
     if (permission === 'granted' && isSupported) {
       const notification = new Notification(title, {
         body,
-        icon: '/logo.png',
-        badge: '/logo.png',
+        icon: '/icons/logos/logo-gold-512.jpg',
+        badge: '/icons/logos/logo-gold-512.jpg',
         tag: 'flip-alert', // prevents duplicate notifications
       });
 

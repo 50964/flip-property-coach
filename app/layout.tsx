@@ -9,8 +9,8 @@ export const metadata: Metadata = {
   title: "Flip Property Coach",
   description: "Build your property flipping empire. Find suppliers, manage projects, track cashflow, and learn from the best.",
   icons: {
-    icon: "/logo.png",
-    apple: "/logo.png",
+  icon: "/icons/logos/logo-gold-512.jpg",
+  apple: "/icons/logos/logo-gold-512.jpg",
   },
   appleWebApp: {
     capable: true,

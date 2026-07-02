@@ -20,8 +20,8 @@ self.addEventListener('push', (event) => {
     const title = data.title || 'Flip Property Coach';
     const options = {
       body: data.body || 'You have a new update',
-      icon: '/logo.png',
-      badge: '/logo.png',
+      icon: '/icons/logos/logo-gold-512.jpg',
+      badge: '/icons/logos/logo-gold-512.jpg',
       data: data.data || {},
     };
     event.waitUntil(self.registration.showNotification(title, options));
