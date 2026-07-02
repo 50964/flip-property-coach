@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1024" height="1024" viewBox="0 0 1024 1024" fill="none">
+  <!-- Background rounded square -->
+  <rect width="1024" height="1024" rx="180" fill="#1A1A1A"/>
+  
+  <!-- Magnifying glass -->
+  <circle cx="420" cy="420" r="160" fill="none" stroke="#C9A227" stroke-width="72"/>
+  <!-- Handle -->
+  <path d="M540 540 L720 720" fill="none" stroke="#C9A227" stroke-width="72" stroke-linecap="round"/>
+</svg>

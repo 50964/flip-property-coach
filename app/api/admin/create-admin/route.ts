@@ -15,18 +15,20 @@ export async function POST(req: Request) {
     // Create user via admin API
     // Use admin.createUser available on service role client
     // @ts-ignore
-    const { data: user, error: createErr } = await svc.auth.admin.createUser({
+    const { data, error: createErr } = await svc.auth.admin.createUser({
       email,
       password,
       email_confirm: true,
     })
     if (createErr) return NextResponse.json({ ok: false, error: createErr.message }, { status: 500 })
 
+    const createdUser = data?.user ?? data
+
     // Insert or upsert profile with admin role
-    const { error: profileErr } = await svc.from('profiles').upsert({ id: user.id, email: email, role: 'admin' }, { onConflict: 'id' })
+    const { error: profileErr } = await svc.from('profiles').upsert({ id: createdUser.id, email: email, role: 'admin' }, { onConflict: 'id' })
     if (profileErr) return NextResponse.json({ ok: false, error: profileErr.message }, { status: 500 })
 
-    return NextResponse.json({ ok: true, user_id: user.id })
+    return NextResponse.json({ ok: true, user_id: createdUser.id })
   } catch (e: any) {
     return NextResponse.json({ ok: false, error: e.message ?? String(e) }, { status: 500 })
   }

@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1024" height="1024" viewBox="0 0 1024 1024" fill="none">
+  <!-- Background rounded square -->
+  <rect width="1024" height="1024" rx="180" fill="#1A1A1A"/>
+  
+  <!-- Heart -->
+  <path d="M512 720 L280 480 Q280 360 400 360 Q480 360 512 440 Q544 360 624 360 Q744 360 744 480 Z" fill="#C9A227"/>
+</svg>

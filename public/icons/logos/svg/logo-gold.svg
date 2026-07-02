@@ -1,0 +1,22 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1024" height="1024" viewBox="0 0 1024 1024" fill="none">
+  <!-- Background rounded square -->
+  <rect width="1024" height="1024" rx="180" fill="#1A1A1A"/>
+  
+  <!-- Stacked layers - Gold metallic effect -->
+  <!-- Bottom layer -->
+  <rect x="256" y="420" width="512" height="120" rx="24" fill="#C9A227"/>
+  <!-- Middle layer -->
+  <rect x="256" y="300" width="512" height="120" rx="24" fill="#D4AF37"/>
+  <!-- Top layer -->
+  <rect x="256" y="180" width="512" height="120" rx="24" fill="#E8C872"/>
+  
+  <!-- Small accent circle on the side -->
+  <circle cx="720" cy="480" r="36" fill="#1A1A1A"/>
+  <circle cx="720" cy="480" r="28" fill="#C9A227"/>
+  
+  <!-- Text: Flip -->
+  <text x="512" y="620" font-family="Arial, sans-serif" font-size="92" font-weight="700" fill="#C9A227" text-anchor="middle">Flip</text>
+  
+  <!-- Text: Property Flip It -->
+  <text x="512" y="720" font-family="Arial, sans-serif" font-size="52" font-weight="600" fill="#C9A227" text-anchor="middle">Property Flip It</text>
+</svg>

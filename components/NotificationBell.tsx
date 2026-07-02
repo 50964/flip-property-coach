@@ -98,7 +98,7 @@ export default function NotificationBell({ userId, role, supplierId }: Notificat
       } else if (typeof Notification !== 'undefined' && Notification.permission === 'granted') {
         new Notification(notif.title, {
           body: notif.message,
-          icon: '/logo.png',
+          icon: '/icons/logos/logo-gold-512.jpg',
           tag: 'flip-alert',
         });
       }

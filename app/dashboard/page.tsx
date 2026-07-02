@@ -943,7 +943,7 @@ export default function FlipDashboard() {
           <div className="flex items-center gap-8">
             <div className="flex items-center gap-3">
               <img 
-                src="/logo.png" 
+                src="/icons/logos/logo-gold-512.jpg" 
                 alt="FLIP Property Coach" 
                 className="h-9 w-auto" 
               />

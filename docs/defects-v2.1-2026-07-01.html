@@ -1,0 +1,102 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Defects v2.1 — 2026-07-01</title>
+<style>
+body{font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial; max-width:900px;margin:32px auto;color:#111}
+pre{background:#f6f8fa;padding:12px;border-radius:6px;overflow:auto}
+code{background:#f6f8fa;padding:2px 4px;border-radius:4px}
+h1,h2,h3{color:#0b63c6}
+table{border-collapse:collapse;width:100%}
+th,td{border:1px solid #ddd;padding:8px;text-align:left}
+</style>
+</head>
+<body>
+<h1>Defects v2.1 — 2026-07-01</h1>
+<div><h1>Defects Version 2.1 — 2026-07-01 09:33</h1>
+<p><strong>Project:</strong> Flip Property Coach / propertyflipit.com<br />
+<strong>Scope:</strong> Full test &amp; fixes update after R-004 and SEC-002 implementation</p>
+<hr />
+<h2>Summary</h2>
+<table>
+<thead>
+<tr>
+<th>Severity</th>
+<th>Total Found</th>
+<th style="text-align: right;">Fixed This Session</th>
+<th style="text-align: right;">Remaining Open</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>CRITICAL</td>
+<td>8</td>
+<td style="text-align: right;">7</td>
+<td style="text-align: right;">1</td>
+</tr>
+<tr>
+<td>HIGH</td>
+<td>10</td>
+<td style="text-align: right;">6</td>
+<td style="text-align: right;">4</td>
+</tr>
+<tr>
+<td>MEDIUM</td>
+<td>12</td>
+<td style="text-align: right;">3</td>
+<td style="text-align: right;">9</td>
+</tr>
+<tr>
+<td>LOW</td>
+<td>4</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">3</td>
+</tr>
+<tr>
+<td><strong>TOTAL</strong></td>
+<td><strong>34</strong></td>
+<td style="text-align: right;"><strong>17</strong></td>
+<td style="text-align: right;"><strong>17</strong></td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2>✅ Fixed Since v2.0 (additional fixes)</h2>
+<ul>
+<li>R-004: Secure admin API routes added (POST /api/admin/promote-user, /demote-user) using SUPABASE_SERVICE_ROLE_KEY; audit table created (admin_audit) with RLS.</li>
+<li>SEC-002: Rate-limiter implemented (lib/rate-limiter.ts) and wired into payment/admin endpoints (in-memory + optional Redis).</li>
+<li>PAY-002 / PAY-003: Authentication checks added to /api/create-checkout-session and /api/create-portal-session.</li>
+<li>Cleanup: removed temporary migration and smoke endpoints.</li>
+</ul>
+<hr />
+<h2>🔴 Critical — Remaining Open (1)</h2>
+<h3>PAY-001 — Missing Stripe environment variables</h3>
+<p><strong>Impact:</strong> Payments broken in production.
+<strong>Fix Required:</strong> Add Stripe secret key, price IDs and webhook secret to Vercel. Create Prices in Stripe.</p>
+<hr />
+<h2>🟠 High — Remaining Open (4)</h2>
+<ul>
+<li>ADM-002 — Admin UI actions still mostly client-only; endpoints exist but UI wiring and server-side persistence for all admin actions needs completion.</li>
+<li>ADM-005 — Enforce supplier approval in FIND results (RLS or query filter).</li>
+<li>PAY-004 — Webhook handler must persist ad purchase records and update supplier ad status.</li>
+<li>PAY-003b — Add strong ownership check for billing portal (map stripe customer -&gt; supabase user).</li>
+</ul>
+<hr />
+<h2>🟡 Medium — Remaining Open (9)</h2>
+<p>(unchanged list: PAY-005, AUTH-005, SEC-003, ADM-004, ADM-006, FLP-007, FLP-008, FLP-009, SUP-002)</p>
+<hr />
+<h2>🔵 Low — Remaining Open (3)</h2>
+<p>(FLP-010, SUP-003, SUP-005)</p>
+<hr />
+<h2>Notes &amp; Next Steps</h2>
+<ol>
+<li>Immediate: Add Stripe env vars in Vercel and test live checkout + webhook handling (PAY-001).</li>
+<li>Complete admin UI wiring to use the new secure admin APIs and add server-side enforcement (ADM-002).</li>
+<li>Harden webhook processing to write ad purchases and update supplier records (PAY-004).</li>
+<li>Optional: enable Redis for rate-limiter (set RATE_LIMIT_REDIS_URL) for horizontal scaling.</li>
+</ol>
+<p><em>Generated from Copilot session — 2026-07-01 09:33</em></p></div>
+</body>
+</html>
